@@ -5,12 +5,12 @@
 PREFIX ?= /usr
 
 get:
-	go get github.com/gotk3/gotk3
-	go get github.com/gotk3/gotk3/gdk
-	go get "github.com/sirupsen/logrus"
+	$(GOROOT)/bin/go get github.com/gotk3/gotk3
+	$(GOROOT)/bin/go get github.com/gotk3/gotk3/gdk
+	$(GOROOT)/bin/go get "github.com/sirupsen/logrus"
 
 build:
-	go build -v -o bin/nwg-look .
+	$(GOROOT)/bin/go build -v -o bin/nwg-look .
 
 install:
 	mkdir -p $(DESTDIR)$(PREFIX)/share/nwg-look
@@ -38,4 +38,4 @@ uninstall:
 	rm $(DESTDIR)$(PREFIX)/bin/nwg-look
 
 run:
-	go run .
+	$(GOROOT)/bin/go run .
