@@ -117,7 +117,7 @@
                   <object class="GtkImage">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="icon-name">nwg-look</property>
+                    <property name="icon-name">com.github.kopsis.nwg-look</property>
                     <property name="icon_size">3</property>
                   </object>
                   <packing>
