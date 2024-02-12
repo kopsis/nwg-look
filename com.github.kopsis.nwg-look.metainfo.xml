@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.kopsis.nwg_look</id>
+  
+  <name>nwg-look</name>
+  <summary>Nwg-look is a GTK3 settings editor, designed to work properly in wlroots-based Wayland environment.</summary>
+  
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+  
+  <description>
+    <p>
+      This application is a part of the [nwg-shell](https://nwg-piotr.github.io/nwg-shell) project.
+    </p>
+    <p>
+      Nwg-look is a GTK3 settings editor, designed to work properly in wlroots-based Wayland environment. The look and feel is strongly influenced by [LXAppearance](https://wiki.lxde.org/en/LXAppearance), but nwg-look is intended to free the user from a few inconveniences:
+    </p>
+    <p><ul>
+      <li>It works natively on Wayland. You no longer need Xwayland, nor strange env variables for it to run.
+      <li>It applies gsettings directly, with no need to use [workarounds](https://github.com/swaywm/sway/wiki/GTK-3-settings-on-Wayland). You don&apos;t need to set  gsettings in the sway config file. You don&apos;t need the <code>import-gsettings</code> script.
+    </ul></p>
+  </description>
+  
+  <launchable type="desktop-id">com.github.kopsis.nwg-look.desktop</launchable>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/nwg-piotr/nwg-shell-resources/master/images/nwg-look/nwg-look-0.1.3.png</image>
+    </screenshot>
+  </screenshots>
+</component>
