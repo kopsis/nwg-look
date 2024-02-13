@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>io.github.kopsis.nwg_look</id>
+  <id>com.github.kopsis.nwg_look</id>
   
   <name>nwg-look</name>
   <summary>Nwg-look is a GTK3 settings editor, designed to work properly in wlroots-based Wayland environment.</summary>
