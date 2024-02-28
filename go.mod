@@ -1,4 +1,4 @@
-module github.com/nwg-piotr/nwg-look
+module github.com/kopsis/nwg-look
 
 go 1.21
 
