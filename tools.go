@@ -1034,7 +1034,7 @@ func getDataDirs() []string {
 	if os.Getenv("XDG_DATA_DIRS") != "" {
 		xdgDataDirs = os.Getenv("XDG_DATA_DIRS")
 	} else {
-		xdgDataDirs = "@out@/local/share/:/usr/share/"
+		xdgDataDirs = "@out@/local/share/:@out@/share/"
 	}
 
 	for _, d := range strings.Split(xdgDataDirs, ":") {
@@ -1285,6 +1285,7 @@ func loadVocabulary(lang string) map[string]string {
 	for _, d := range dataDirs {
 		langsDir := filepath.Join(d, "/nwg-look/langs/")
 		enUSFile := filepath.Join(langsDir, "en_US.json")
+		log.Infof("Checking for dictionary '%s'", enUSFile)
 		if pathExists(enUSFile) {
 			log.Infof(">>> Loading basic lang from '%s'", enUSFile)
 			jsonFile, err := os.Open(enUSFile)
