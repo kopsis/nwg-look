@@ -1034,7 +1034,7 @@ func getDataDirs() []string {
 	if os.Getenv("XDG_DATA_DIRS") != "" {
 		xdgDataDirs = os.Getenv("XDG_DATA_DIRS")
 	} else {
-		xdgDataDirs = "/usr/local/share/:/usr/share/"
+		xdgDataDirs = "@out@/local/share/:/usr/share/"
 	}
 
 	for _, d := range strings.Split(xdgDataDirs, ":") {
