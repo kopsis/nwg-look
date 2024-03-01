@@ -891,13 +891,16 @@ func getThemeNames() []string {
 	exclusions := []string{"Default", "Emacs"}
 	var names []string
 	for _, d := range dirs {
+        log.Debugf("Theme check dir: %s", d)
 		files, err := listFiles(d)
 		if err == nil {
 			for _, f := range files {
 				if f.IsDir() {
+                    log.Debugf("Theme check dir: %s", f)
 					subdirs, err := listFiles(filepath.Join(d, f.Name()))
 					if err == nil {
 						for _, sd := range subdirs {
+                            log.Debugf("Theme check subdir: %s", sd)
 							if sd.IsDir() && strings.HasPrefix(sd.Name(), "gtk-") {
 								if !isIn(names, f.Name()) {
 									if !isIn(exclusions, f.Name()) {
