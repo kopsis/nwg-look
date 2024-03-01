@@ -895,8 +895,9 @@ func getThemeNames() []string {
 		files, err := listFiles(d)
 		if err == nil {
 			for _, f := range files {
+				log.Debugf("Is dir? %s", f.Name())
 				if f.IsDir() {
-                    log.Debugf("Theme check dir: %s", f)
+                    log.Debugf("Theme check dir 2: %s", f)
 					subdirs, err := listFiles(filepath.Join(d, f.Name()))
 					if err == nil {
 						for _, sd := range subdirs {
@@ -916,6 +917,9 @@ func getThemeNames() []string {
 					}
 				}
 			}
+		}
+		else {
+			log.Debugf("Error enumerating %s", d)
 		}
 	}
 	sort.Slice(names, func(i, j int) bool {
