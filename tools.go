@@ -939,7 +939,7 @@ func getIconThemeNames() map[string]string {
 	for _, d := range dirs {
 		log.Debugf("Walking dir: %s", d)
 		symwalk.Walk(d, func(path string, info os.FileInfo, err error) error {
-			// Icon/cursor themes will have an "index.theme" file
+			// Icon themes will have an "index.theme" file
 			if filepath.Base(path) == "index.theme" {
 				log.Debugf("Possible icon theme in %s", filepath.Dir(path))
 				// Check last directory in path for exclusions
@@ -987,17 +987,20 @@ func getCursorThemes() (map[string]string, map[string]string) {
 	exclusions := []string{"default", "hicolor", "locolor"}
 	for _, d := range dirs {
 		symwalk.Walk(d, func(path string, info os.FileInfo, err error) error {
-			// Only interested in the first level subdirectories.
-			// On NixOS the theme dirs will be symlinks.
-			if filepath.Dir(path) == d && (info.IsDir() || (info.Mode() & os.ModeSymlink == os.ModeSymlink)) {
-				f := filepath.Base(path)
+			// Cursor themes will have a "cursor.theme" file
+			if filepath.Base(path) == "cursor.theme" {
+				log.Debugf("Possible cursor theme in %s", filepath.Dir(path))
+				// Check last directory in path for exclusions
+				f := filepath.Base(filepath.Dir(path))
 				if !isIn(exclusions, f) {
-					name, _, err := iconThemeName(filepath.Join(path, "cursors"))
+					name, hasDirs, err := cursorThemeName(filepath.Dir(path))
 					if err == nil {
-						name2FolderName[name] = f
+						name2folderName[name] = f
+						name2path[f] = filepath.Join(path, "cursors")
+						log.Debugf("Cursor theme found: %s", name)
 					}
-					log.Debugf("Cursor theme found: %s", f)
-					name2path[f] = filepath.Join(path, "cursors")
+				} else {
+					log.Debugf("Excluded icon theme: %s", f)
 				}
 			}
 			return nil
@@ -1048,6 +1051,33 @@ func iconThemeName(path string) (string, bool, error) {
 	lines, err := loadTextFile(filepath.Join(path, "index.theme"))
 	if err != nil {
 		log.Debugf("Can't open: %s", filepath.Join(path, "index.theme"))
+		return name, hasDirs, err
+	}
+
+	for _, line := range lines {
+		if strings.HasPrefix(line, "Name=") || strings.HasPrefix(line, "Name =") {
+			name = strings.Split(line, "=")[1]
+			name = strings.TrimSpace(name)
+			break
+		}
+	}
+	for _, line := range lines {
+		if strings.HasPrefix(line, "Directories=") || strings.HasPrefix(line, "Directories =") {
+			hasDirs = true
+			break
+		}
+	}
+	return name, hasDirs, err
+}
+
+func cursorThemeName(path string) (string, bool, error) {
+	name := ""
+	hasDirs := false
+
+	log.Debugf("Getting cursor theme name from: %s", path)
+	lines, err := loadTextFile(filepath.Join(path, "cursor.theme"))
+	if err != nil {
+		log.Debugf("Can't open: %s", filepath.Join(path, "cursor.theme"))
 		return name, hasDirs, err
 	}
 
