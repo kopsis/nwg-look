@@ -940,7 +940,7 @@ func getIconThemeNames() map[string]string {
 		symwalk.Walk(d, func(path string, info os.FileInfo, err error) error {
 			// Only interested in the first level subdirectories.
 			// On NixOS the theme dirs will be symlinks.
-			if filepath.Dir(path) == d && (info.IsDir() || (info.Mode() & os.ModeSymlink != os.ModeSymlink))) {
+			if filepath.Dir(path) == d && (info.IsDir() || (info.Mode() & os.ModeSymlink != os.ModeSymlink)) {
 				f := filepath.Base(path)
 				if !isIn(exclusions, f) {
 					name, hasDirs, err := iconThemeName(path)
@@ -987,7 +987,7 @@ func getCursorThemes() (map[string]string, map[string]string) {
 		symwalk.Walk(d, func(path string, info os.FileInfo, err error) error {
 			// Only interested in the first level subdirectories.
 			// On NixOS the theme dirs will be symlinks.
-			if filepath.Dir(path) == d && (info.IsDir() || (info.Mode() & os.ModeSymlink != os.ModeSymlink))) {
+			if filepath.Dir(path) == d && (info.IsDir() || (info.Mode() & os.ModeSymlink != os.ModeSymlink)) {
 				f := filepath.Base(path)
 				if !isIn(exclusions, f) {
 					content, _ := listFiles(path)
