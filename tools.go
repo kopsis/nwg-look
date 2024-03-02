@@ -990,19 +990,12 @@ func getCursorThemes() (map[string]string, map[string]string) {
 			if filepath.Dir(path) == d && (info.IsDir() || (info.Mode() & os.ModeSymlink != os.ModeSymlink)) {
 				f := filepath.Base(path)
 				if !isIn(exclusions, f) {
-					content, _ := listFiles(path)
+					name, _, err := iconThemeName(filepath.Join(path, "cursors"))
 					if err == nil {
-						for _, item := range content {
-							if item.Name() == "cursors" {
-								name, _, err := iconThemeName(path)
-								if err == nil {
-									name2FolderName[name] = f
-								}
-								log.Debugf("Cursor theme found: %s", f)
-								name2path[f] = filepath.Join(path, "cursors")
-							}
-						}
+						name2FolderName[name] = f
 					}
+					log.Debugf("Cursor theme found: %s", f)
+					name2path[f] = filepath.Join(path, "cursors")
 				}
 			}
 			return nil
@@ -1049,8 +1042,10 @@ func iconThemeName(path string) (string, bool, error) {
 	name := ""
 	hasDirs := false
 
+	log.Debugf("Getting icon theme name from: %s", path)
 	lines, err := loadTextFile(filepath.Join(path, "index.theme"))
 	if err != nil {
+		log.Debugf("Can't open: %s", filepath.Join(path, "index.theme"))
 		return name, hasDirs, err
 	}
 
