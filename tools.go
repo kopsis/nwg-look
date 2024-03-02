@@ -942,7 +942,7 @@ func getIconThemeNames() map[string]string {
 			// Only interested in the first level subdirectories.
 			// On NixOS the theme dirs will be symlinks.
 			log.Debugf("Checking for icon theme in: %s", path)
-			log.Degugf("Dir: %s, want: %s", filepath.dir(path), d)
+			log.Debugf("Dir: %s, want: %s", filepath.Dir(path), d)
 			log.Debugf("Is Dir: %d", info.IsDir())
 			log.Debugf("Is Symlink: %d", info.Mode() & os.ModeSymlink)
 			if filepath.Dir(path) == d && (info.IsDir() || (info.Mode() & os.ModeSymlink == os.ModeSymlink)) {
