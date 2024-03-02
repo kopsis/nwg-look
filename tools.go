@@ -917,8 +917,7 @@ func getThemeNames() []string {
 					}
 				}
 			}
-		}
-		else {
+		} else {
 			log.Debugf("Error enumerating %s", d)
 		}
 	}
