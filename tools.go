@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/edwardrf/symwalk"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -892,35 +893,20 @@ func getThemeNames() []string {
 	var names []string
 	for _, d := range dirs {
         log.Debugf("Theme check dir: %s", d)
-		files, err := listFiles(d)
-		if err == nil {
-			for _, fx := range files {
-                f := filepath.EvalSymlinks(fx)
-				log.Debugf("Is dir? %s", f.Name())
-				if f.IsDir() {
-                    log.Debugf("Theme check dir 2: %s", f)
-					subdirs, err := listFiles(filepath.Join(d, f.Name()))
-					if err == nil {
-						for _, sd := range subdirs {
-                            log.Debugf("Theme check subdir: %s", sd)
-							if sd.IsDir() && strings.HasPrefix(sd.Name(), "gtk-") {
-								if !isIn(names, f.Name()) {
-									if !isIn(exclusions, f.Name()) {
-										names = append(names, f.Name())
-										log.Debugf("Theme found: %s", f.Name())
-									} else {
-										log.Debugf("Excluded theme: %s", f.Name())
-									}
-									break
-								}
-							}
-						}
+		symwalk.Walk(d, func(path string, info os.FileInfo, err error) error {
+			if info.IsDir() && strings.HasPrefix(filepath.Base(path), "gtk-") {
+				f := filepath.Base(filepath.Dir(path))
+				if !isIn(names, f) {
+					if !isIn(exclusions, f) {
+						names = append(names, f)
+						log.Debugf("Theme found: %s", f)
+					} else {
+						log.Debugf("Excluded theme: %s", f)
 					}
 				}
 			}
-		} else {
-			log.Debugf("Error enumerating %s", d)
-		}
+			return nil
+		}) 
 	}
 	sort.Slice(names, func(i, j int) bool {
 		return names[i] < names[j]
@@ -951,24 +937,23 @@ func getIconThemeNames() map[string]string {
 	exclusions := []string{"default", "hicolor", "locolor"}
 	var names []string
 	for _, d := range dirs {
-		files, err := listFiles(d)
-		if err == nil {
-			for _, fx := range files {
-                f := filepath.EvalSymlinks(fx)
-				if f.IsDir() {
-					if !isIn(exclusions, f.Name()) {
-						name, hasDirs, err := iconThemeName(filepath.Join(d, f.Name()))
-						if err == nil && hasDirs {
-							names = append(names, name)
-							name2folderName[name] = f.Name()
-							log.Debugf("Icon theme found: %s", name)
-						}
-					} else {
-						log.Debugf("Excluded icon theme: %s", f.Name())
+		symwalk.Walk(d, func(path string, info os.FileInfo, err error) error {
+			// Only interested in the first level subdirectories
+			if filepath.Dir(path) == d && info.IsDir() {
+				f := filepath.Base(path)
+				if !isIn(exclusions, f) {
+					name, hasDirs, err := iconThemeName(path)
+					if err == nil && hasDirs {
+						names = append(names, name)
+						name2folderName[name] = f
+						log.Debugf("Icon theme found: %s", name)
 					}
+				} else {
+					log.Debugf("Excluded icon theme: %s", f)
 				}
 			}
-		}
+			return nil
+		})
 	}
 	sort.Slice(names, func(i, j int) bool {
 		return strings.ToUpper(names[i]) < strings.ToUpper(names[j])
@@ -998,29 +983,28 @@ func getCursorThemes() (map[string]string, map[string]string) {
 
 	exclusions := []string{"default", "hicolor", "locolor"}
 	for _, d := range dirs {
-		files, err := listFiles(d)
-		if err == nil {
-			for _, fx := range files {
-                f := filepath.EvalSymlinks(fx)
-				if f.IsDir() {
-					if !isIn(exclusions, f.Name()) {
-						content, _ := listFiles(filepath.Join(d, f.Name()))
-						if err == nil {
-							for _, item := range content {
-								if item.Name() == "cursors" {
-									name, _, err := iconThemeName(filepath.Join(d, f.Name()))
-									if err == nil {
-										name2FolderName[name] = f.Name()
-									}
-									log.Debugf("Cursor theme found: %s", f.Name())
-									name2path[f.Name()] = filepath.Join(d, f.Name(), "cursors")
+		symwalk.Walk(d, func(path string, info os.FileInfo, err error) error {
+			// Only interested in the first level subdirectories
+			if filepath.Dir(path) == d && info.IsDir() {
+				f := filepath.Base(path)
+				if !isIn(exclusions, f) {
+					content, _ := listFiles(path)
+					if err == nil {
+						for _, item := range content {
+							if item.Name() == "cursors" {
+								name, _, err := iconThemeName(filepath.Join(d, f))
+								if err == nil {
+									name2FolderName[name] = f
 								}
+								log.Debugf("Cursor theme found: %s", f)
+								name2path[f] = filepath.Join(d, f, "cursors")
 							}
 						}
 					}
 				}
 			}
-		}
+			return nil
+		})
 	}
 
 	return name2path, name2FolderName
