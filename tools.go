@@ -937,9 +937,14 @@ func getIconThemeNames() map[string]string {
 	exclusions := []string{"default", "hicolor", "locolor"}
 	var names []string
 	for _, d := range dirs {
+		log.Debugf("Walking dir: %s", d)
 		symwalk.Walk(d, func(path string, info os.FileInfo, err error) error {
 			// Only interested in the first level subdirectories.
 			// On NixOS the theme dirs will be symlinks.
+			log.Debugf("Checking for icon theme in: %s", path)
+			log.Degugf("Dir: %s, want: %s", filepath.dir(path), d)
+			log.Debugf("Is Dir: %d", info.IsDir())
+			log.Debugf("Is Symlink: %d", info.Mode() & os.ModeSymlink)
 			if filepath.Dir(path) == d && (info.IsDir() || (info.Mode() & os.ModeSymlink == os.ModeSymlink)) {
 				f := filepath.Base(path)
 				if !isIn(exclusions, f) {
