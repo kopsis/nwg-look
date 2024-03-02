@@ -895,7 +895,7 @@ func getThemeNames() []string {
 		files, err := listFiles(d)
 		if err == nil {
 			for _, fx := range files {
-                f := filepath.EvalSymLinks(fx)
+                f := filepath.EvalSymlinks(fx)
 				log.Debugf("Is dir? %s", f.Name())
 				if f.IsDir() {
                     log.Debugf("Theme check dir 2: %s", f)
@@ -954,7 +954,7 @@ func getIconThemeNames() map[string]string {
 		files, err := listFiles(d)
 		if err == nil {
 			for _, fx := range files {
-                f := filepath.EvalSymLinks(fx)
+                f := filepath.EvalSymlinks(fx)
 				if f.IsDir() {
 					if !isIn(exclusions, f.Name()) {
 						name, hasDirs, err := iconThemeName(filepath.Join(d, f.Name()))
@@ -1001,7 +1001,7 @@ func getCursorThemes() (map[string]string, map[string]string) {
 		files, err := listFiles(d)
 		if err == nil {
 			for _, fx := range files {
-                f := filepath.EvalSymLinks(fx)
+                f := filepath.EvalSymlinks(fx)
 				if f.IsDir() {
 					if !isIn(exclusions, f.Name()) {
 						content, _ := listFiles(filepath.Join(d, f.Name()))
