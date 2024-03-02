@@ -938,8 +938,9 @@ func getIconThemeNames() map[string]string {
 	var names []string
 	for _, d := range dirs {
 		symwalk.Walk(d, func(path string, info os.FileInfo, err error) error {
-			// Only interested in the first level subdirectories
-			if filepath.Dir(path) == d && info.IsDir() {
+			// Only interested in the first level subdirectories.
+			// On NixOS the theme dirs will be symlinks.
+			if filepath.Dir(path) == d && (info.IsDir() || (info.Mode() & os.ModeSymlink != os.ModeSymlink))) {
 				f := filepath.Base(path)
 				if !isIn(exclusions, f) {
 					name, hasDirs, err := iconThemeName(path)
@@ -984,20 +985,21 @@ func getCursorThemes() (map[string]string, map[string]string) {
 	exclusions := []string{"default", "hicolor", "locolor"}
 	for _, d := range dirs {
 		symwalk.Walk(d, func(path string, info os.FileInfo, err error) error {
-			// Only interested in the first level subdirectories
-			if filepath.Dir(path) == d && info.IsDir() {
+			// Only interested in the first level subdirectories.
+			// On NixOS the theme dirs will be symlinks.
+			if filepath.Dir(path) == d && (info.IsDir() || (info.Mode() & os.ModeSymlink != os.ModeSymlink))) {
 				f := filepath.Base(path)
 				if !isIn(exclusions, f) {
 					content, _ := listFiles(path)
 					if err == nil {
 						for _, item := range content {
 							if item.Name() == "cursors" {
-								name, _, err := iconThemeName(filepath.Join(d, f))
+								name, _, err := iconThemeName(path)
 								if err == nil {
 									name2FolderName[name] = f
 								}
 								log.Debugf("Cursor theme found: %s", f)
-								name2path[f] = filepath.Join(d, f, "cursors")
+								name2path[f] = filepath.Join(path, "cursors")
 							}
 						}
 					}
@@ -1330,3 +1332,5 @@ func loadVocabulary(lang string) map[string]string {
 	os.Exit(1)
 	return nil
 }
+
+// vim:ts=4 sw=4 noet
