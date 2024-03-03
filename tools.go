@@ -996,7 +996,7 @@ func getCursorThemes() (map[string]string, map[string]string) {
 					name, _, err := cursorThemeName(filepath.Dir(path))
 					if err == nil {
 						name2FolderName[name] = f
-						name2path[f] = filepath.Join(path, "cursors")
+						name2path[f] = filepath.Join(filepath.Dir(path), "cursors")
 						log.Debugf("Cursor theme found: %s", name)
 					}
 				} else {
