@@ -1000,7 +1000,7 @@ func getCursorThemes() (map[string]string, map[string]string) {
 						log.Debugf("Cursor theme found: %s", name)
 					}
 				} else {
-					log.Debugf("Excluded icon theme: %s", f)
+					log.Debugf("Excluded cursor theme: %s", f)
 				}
 			}
 			return nil

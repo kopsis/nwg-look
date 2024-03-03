@@ -381,8 +381,10 @@ func setUpCursorsPreview(path string) *gtk.Frame {
 		for _, name := range images {
 			imgPath := filepath.Join(path, name)
 
+			exe := "xcur2png"
 			args := []string{imgPath, "-d", cursorsDir, "-c", cursorsDir, "-q"}
-			cmd := exec.Command("xcur2png", args...)
+			log.Debugf("Running: %s %s -d %s -c %s -q", exe, imgPath, cursorsDir, cursorsDir)
+			cmd := exec.Command(exe, args...)
 
 			cmd.Run()
 
@@ -672,3 +674,5 @@ func setUpProgramSettingsForm() *gtk.Frame {
 
 	return frame
 }
+
+// vim:ts=4 sw=4 noet
