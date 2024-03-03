@@ -1105,10 +1105,30 @@ func saveTextFile(text []string, path string) {
 }
 
 func listFiles(dir string) ([]os.DirEntry, error) {
-	files, err := os.ReadDir(dir)
+	var edir string
+	// Get fileinfo so we can determine if it's a symlink
+	info, err := os.Lstat(dir)
 	if err == nil {
-		return files, nil
+		// Check for symlink
+		if info.Mode()&os.ModeSymlink == os.ModeSymlink {
+			// Get linked node. If the destination is another symlink
+			// the subsequent ReadDir will fail, but recursive handling
+			// of symlinks opens a large can of worms (loop detection).
+			edir, err = filepath.EvalSymlinks(dir)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			// Not a symlink - use as-is
+			edir = dir
+		}
+
+		files, err := os.ReadDir(edir)
+		if err == nil {
+			return files, nil
+		}
 	}
+
 	return nil, err
 }
 
@@ -1336,3 +1356,5 @@ func loadVocabulary(lang string) map[string]string {
 	os.Exit(1)
 	return nil
 }
+
+// vim:ts=4 sw=4 noet
