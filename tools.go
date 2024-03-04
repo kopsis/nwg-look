@@ -1118,14 +1118,18 @@ func listFiles(dir string) ([]os.DirEntry, error) {
 			if err != nil {
 				return nil, err
 			}
+			log.Debugf("listFiles(%s) target is symlink (%s)", dir, edir)
 		} else {
 			// Not a symlink - use as-is
 			edir = dir
+			log.Debugf("listFiles(%s) target is Dir", dir)
 		}
 
 		files, err := os.ReadDir(edir)
 		if err == nil {
 			return files, nil
+		} else {
+			log.Debugf("listFiles() failed to read %s", edir)
 		}
 	}
 
