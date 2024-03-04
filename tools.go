@@ -894,11 +894,11 @@ func getThemeNames() []string {
 		files, err := listFiles(d)
 		if err == nil {
 			for _, f := range files {
-				if f.IsDir() {
+				if isDirOrSymlink(f) {
 					subdirs, err := listFiles(filepath.Join(d, f.Name()))
 					if err == nil {
 						for _, sd := range subdirs {
-							if sd.IsDir() && strings.HasPrefix(sd.Name(), "gtk-") {
+							if isDirOrSymlink(sd) && strings.HasPrefix(sd.Name(), "gtk-") {
 								if !isIn(names, f.Name()) {
 									if !isIn(exclusions, f.Name()) {
 										names = append(names, f.Name())
@@ -947,7 +947,7 @@ func getIconThemeNames() map[string]string {
 		files, err := listFiles(d)
 		if err == nil {
 			for _, f := range files {
-				if f.IsDir() {
+				if isDirOrSymlink(f) {
 					if !isIn(exclusions, f.Name()) {
 						name, hasDirs, err := iconThemeName(filepath.Join(d, f.Name()))
 						if err == nil && hasDirs {
@@ -993,7 +993,7 @@ func getCursorThemes() (map[string]string, map[string]string) {
 		files, err := listFiles(d)
 		if err == nil {
 			for _, f := range files {
-				if f.IsDir() {
+				if isDirOrSymlink(f) {
 					if !isIn(exclusions, f.Name()) {
 						content, _ := listFiles(filepath.Join(d, f.Name()))
 						if err == nil {
@@ -1102,6 +1102,10 @@ func saveTextFile(text []string, path string) {
 
 	datawriter.Flush()
 	file.Close()
+}
+
+func isDirOrSymlink(f fs.FileInfo) bool {
+	return f.IsDir() || (f.Mode()&os.ModeSymlink == os.ModeSymlink)
 }
 
 func listFiles(dir string) ([]os.DirEntry, error) {
