@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -1104,8 +1105,8 @@ func saveTextFile(text []string, path string) {
 	file.Close()
 }
 
-func isDirOrSymlink(f fs.FileInfo) bool {
-	return f.IsDir() || (f.Mode()&os.ModeSymlink == os.ModeSymlink)
+func isDirOrSymlink(f fs.DirEntry) bool {
+	return f.IsDir() || (f.Type()&os.ModeSymlink == os.ModeSymlink)
 }
 
 func listFiles(dir string) ([]os.DirEntry, error) {
