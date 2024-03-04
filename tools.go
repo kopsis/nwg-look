@@ -1057,7 +1057,10 @@ func iconThemeName(path string) (string, bool, error) {
 
 	lines, err := loadTextFile(filepath.Join(path, "index.theme"))
 	if err != nil {
-		return name, hasDirs, err
+		lines, err = loadTextFile(filepath.Join(path, "cursor.theme"))
+		if err != nil {
+			return name, hasDirs, err
+		}
 	}
 
 	for _, line := range lines {
